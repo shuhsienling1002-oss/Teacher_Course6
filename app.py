@@ -148,7 +148,7 @@ SENTENCES = [
     {"amis": "Maolah kako to widang ako.", "zh": "我很喜歡我的朋友。", "file": "s_5"},
 ]
 
-# 測驗題庫：句子填空 (完全移除 ci ima 問句)
+# 測驗題庫：句子填空 (無問句)
 QUIZ_CHARACTERS = [
     {"q": "Takaraw ci ______ .", "zh_q": "______ 很高。", "ans": "Hana", "options": ["Hana", "Arik", "Nah"]},
     {"q": "Malalok ci ______ .", "zh_q": "______ 很勤勞。", "ans": "Arik", "options": ["Arik", "Hana", "Nah"]},
@@ -185,7 +185,7 @@ def init_quiz():
     random.shuffle(q1_options)
     st.session_state.q1_data = {"target": q1_target, "options": q1_options}
 
-    # Q2: 句子填空 (已更新為無問句版)
+    # Q2: 句子填空
     q2_data = random.choice(QUIZ_CHARACTERS)
     random.shuffle(q2_data['options'])
     st.session_state.q2_data = q2_data
@@ -259,11 +259,13 @@ def show_quiz_mode():
                     else:
                         st.error("不對喔！")
 
-    # Q2: 句子填空 (無問句)
+    # Q2: 句子填空 (已加上提示)
     elif st.session_state.current_q == 1:
         data = st.session_state.q2_data
         st.markdown("**第 2 關：完成句子**")
-        st.markdown("請選出正確的詞，把句子補完：")
+        
+        # 👇 這裡加上了提示文字
+        st.markdown("請選出正確的詞，把句子補完：(從本單元句子中)")
         
         # 顯示題目框
         st.markdown(f"""
