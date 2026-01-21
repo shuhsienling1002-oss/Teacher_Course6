@@ -148,31 +148,24 @@ SENTENCES = [
     {"amis": "Maolah kako to widang ako.", "zh": "我很喜歡我的朋友。", "file": "s_5"},
 ]
 
-# 測驗題庫：角色與特質配對
-# 修正重點：更新了 Nah 的問句
+# 測驗題庫：句子填空 (完全移除 ci ima 問句)
 QUIZ_CHARACTERS = [
-    {"q": "Takaraw ci ima?", "zh_q": "誰很高？", "ans": "Hana", "options": ["Hana", "Arik", "Nah"]},
-    {"q": "Malalok ci ima?", "zh_q": "誰很勤勞？", "ans": "Arik", "options": ["Arik", "Hana", "Nah"]},
-    
-    # 👇 這裡更新了問句 👇
-    {"q": "Cima ko mafana'ay a mihinom to faloco' no widang?", "zh_q": "誰很會安慰朋友的心？", "ans": "Nah", "options": ["Nah", "Hana", "Arik"]},
-    
-    {"q": "O maan ko tayal nangra?", "zh_q": "她們的工作是什麼？", "ans": "Singsi", "options": ["Singsi", "Ising", "Kingcaco"]},
+    {"q": "Takaraw ci ______ .", "zh_q": "______ 很高。", "ans": "Hana", "options": ["Hana", "Arik", "Nah"]},
+    {"q": "Malalok ci ______ .", "zh_q": "______ 很勤勞。", "ans": "Arik", "options": ["Arik", "Hana", "Nah"]},
+    {"q": "Mafana' a mihinom to faloco' ci ______ .", "zh_q": "______ 很會安慰朋友的心。", "ans": "Nah", "options": ["Nah", "Hana", "Arik"]},
+    {"q": "O ______ ko tayal nangra.", "zh_q": "她們的工作是 ______ 。", "ans": "singsi", "options": ["singsi", "ising", "kingcaco"]},
 ]
 
 # --- 1.5 智慧語音核心 ---
 def play_audio(text, filename_base=None):
-    # 1. 優先播放真人錄音
     if filename_base:
         for ext in ['mp3', 'm4a']:
             path = f"audio/{filename_base}.{ext}"
             if os.path.exists(path):
                 st.audio(path, format=f'audio/{ext}')
                 return
-    
-    # 2. 備用 TTS
     try:
-        tts = gTTS(text=text, lang='id') # 印尼語發音接近阿美語
+        tts = gTTS(text=text, lang='id')
         fp = BytesIO()
         tts.write_to_fp(fp)
         fp.seek(0)
@@ -192,12 +185,12 @@ def init_quiz():
     random.shuffle(q1_options)
     st.session_state.q1_data = {"target": q1_target, "options": q1_options}
 
-    # Q2: 句子理解 (角色題)
+    # Q2: 句子填空 (已更新為無問句版)
     q2_data = random.choice(QUIZ_CHARACTERS)
     random.shuffle(q2_data['options'])
     st.session_state.q2_data = q2_data
 
-    # Q3: 句子翻譯 (聽音檔選中文)
+    # Q3: 句子翻譯
     q3_target = random.choice(SENTENCES)
     other_sentences = [s['zh'] for s in SENTENCES if s['zh'] != q3_target['zh']]
     q3_options = random.sample(other_sentences, 2) + [q3_target['zh']]
@@ -212,9 +205,8 @@ if 'q1_data' not in st.session_state:
 def show_learning_mode():
     st.markdown("<div class='sub-title'>— 認識朋友與特質 —</div>", unsafe_allow_html=True)
     
-    # --- Part 1: 單字卡片 (先單字) ---
+    # Part 1: 單字
     st.markdown("### 📝 重點單字")
-    
     cols = st.columns(3)
     for idx, item in enumerate(VOCABULARY):
         with cols[idx % 3]:
@@ -229,7 +221,7 @@ def show_learning_mode():
             
     st.markdown("---")
 
-    # --- Part 2: 句子學習 (後句子) ---
+    # Part 2: 句子
     st.markdown("### 📖 課文句子")
     for s in SENTENCES:
         st.markdown(f"""
@@ -267,24 +259,31 @@ def show_quiz_mode():
                     else:
                         st.error("不對喔！")
 
-    # Q2: 角色理解
+    # Q2: 句子填空 (無問句)
     elif st.session_state.current_q == 1:
         data = st.session_state.q2_data
-        st.markdown("**第 2 關：課文理解**")
-        st.markdown(f"❓ **{data['q']}**")
-        st.caption(f"({data['zh_q']})")
+        st.markdown("**第 2 關：完成句子**")
+        st.markdown("請選出正確的詞，把句子補完：")
         
-        ans = st.radio("請選擇正確答案：", data['options'])
+        # 顯示題目框
+        st.markdown(f"""
+        <div style="background:#FFF; padding:20px; border-radius:15px; border:2px dashed #FF8F00; margin:15px 0; text-align:center;">
+            <h2 style="color:#333; margin:0;">{data['q']}</h2>
+            <p style="color:#888; margin-top:5px;">({data['zh_q']})</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        ans = st.radio("選項：", data['options'])
         if st.button("送出答案"):
             if ans == data['ans']:
                 st.balloons()
-                st.success(f"沒錯！答案就是 {data['ans']}！")
-                time.sleep(1)
+                st.success(f"沒錯！完整句子是：{data['q'].replace('______', ans)}")
+                time.sleep(1.5)
                 st.session_state.score += 1
                 st.session_state.current_q += 1
                 st.rerun()
             else:
-                st.error("再想一下，課文裡是怎麼說的呢？")
+                st.error("再想一下，是誰呢？")
 
     # Q3: 句子翻譯
     elif st.session_state.current_q == 2:
