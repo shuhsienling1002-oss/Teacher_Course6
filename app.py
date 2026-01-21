@@ -123,7 +123,7 @@ st.markdown("""
 
 # --- 1. 數據結構 ---
 
-# 單字資料 (包含相反詞概念)
+# 單字資料
 VOCABULARY = [
     {"amis": "takaraw",   "zh": "高的",   "emoji": "🦒", "file": "v_takaraw"},
     {"amis": "poener",    "zh": "矮的",   "emoji": "🍄", "file": "v_poener"},
@@ -149,10 +149,11 @@ SENTENCES = [
 ]
 
 # 測驗題庫：角色與特質配對
+# 修正說明：將原本語法錯誤的問句改為 "Ci ima ko mafana'ay..." 句型
 QUIZ_CHARACTERS = [
     {"q": "Takaraw ci ima?", "zh_q": "誰很高？", "ans": "Hana", "options": ["Hana", "Arik", "Nah"]},
     {"q": "Malalok ci ima?", "zh_q": "誰很勤勞？", "ans": "Arik", "options": ["Arik", "Hana", "Nah"]},
-    {"q": "Mafana' a mihinom to widang ci ima?", "zh_q": "誰很會安慰朋友？", "ans": "Nah", "options": ["Nah", "Hana", "Arik"]},
+    {"q": "Ci ima ko mafana'ay a mihinom to widang?", "zh_q": "誰很會安慰朋友？", "ans": "Nah", "options": ["Nah", "Hana", "Arik"]},
     {"q": "O maan ko tayal nangra?", "zh_q": "她們的工作是什麼？", "ans": "Singsi", "options": ["Singsi", "Ising", "Kingcaco"]},
 ]
 
@@ -208,20 +209,7 @@ if 'q1_data' not in st.session_state:
 def show_learning_mode():
     st.markdown("<div class='sub-title'>— 認識朋友與特質 —</div>", unsafe_allow_html=True)
     
-    # --- Part 1: 句子學習 ---
-    st.markdown("### 📖 課文句子")
-    for s in SENTENCES:
-        st.markdown(f"""
-        <div class="sentence-box">
-            <div class="amis-text">{s['amis']}</div>
-            <div class="zh-text">{s['zh']}</div>
-        </div>
-        """, unsafe_allow_html=True)
-        play_audio(s['amis'], filename_base=s['file'])
-    
-    st.markdown("---")
-
-    # --- Part 2: 單字卡片 ---
+    # --- Part 1: 單字卡片 (順序調整：先單字) ---
     st.markdown("### 📝 重點單字")
     
     # 使用 3 欄排列，讓畫面更緊湊
@@ -236,6 +224,19 @@ def show_learning_mode():
             </div>
             """, unsafe_allow_html=True)
             play_audio(item['amis'], filename_base=item['file'])
+            
+    st.markdown("---")
+
+    # --- Part 2: 句子學習 (順序調整：後句子) ---
+    st.markdown("### 📖 課文句子")
+    for s in SENTENCES:
+        st.markdown(f"""
+        <div class="sentence-box">
+            <div class="amis-text">{s['amis']}</div>
+            <div class="zh-text">{s['zh']}</div>
+        </div>
+        """, unsafe_allow_html=True)
+        play_audio(s['amis'], filename_base=s['file'])
 
 def show_quiz_mode():
     st.markdown("<h3 style='text-align: center; color: #E65100; margin-bottom: 20px;'>🏆 友情大考驗</h3>", unsafe_allow_html=True)
