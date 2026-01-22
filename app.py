@@ -26,13 +26,37 @@ st.markdown("""
     
     .block-container { padding-top: 2rem !important; padding-bottom: 5rem !important; }
     
-    /* 標題樣式 */
+    /* 標題區域優化 */
+    .header-container {
+        text-align: center;
+        margin-bottom: 30px;
+        padding: 20px;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 4px 15px rgba(255, 111, 0, 0.1);
+        border-bottom: 5px solid #FF8F00;
+    }
+    
     h1 {
         font-family: 'Helvetica Neue', sans-serif;
         font-weight: 900 !important;
         text-align: center;
         color: #FF6F00 !important;
-        margin-bottom: 10px;
+        margin: 10px 0 !important;
+        line-height: 1.2 !important;
+    }
+    
+    /* 講師資訊標籤 */
+    .info-tag {
+        display: inline-block;
+        background-color: #FFF3E0;
+        color: #8D6E63;
+        padding: 8px 20px;
+        border-radius: 20px;
+        font-size: 15px;
+        font-weight: 700;
+        margin-top: 10px;
+        border: 1px solid #FFE082;
     }
     
     /* 副標題 */
@@ -41,7 +65,8 @@ st.markdown("""
         color: #8D6E63 !important;
         font-size: 18px;
         font-weight: 500;
-        margin-bottom: 30px;
+        margin-bottom: 20px;
+        margin-top: 20px;
     }
 
     /* 按鈕：溫暖橘漸層 */
@@ -71,7 +96,9 @@ st.markdown("""
         margin-bottom: 15px;
         border: 2px solid #FFE082; 
         box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        transition: transform 0.2s;
     }
+    .card:hover { transform: scale(1.02); }
     
     /* 句子卡片 */
     .sentence-box {
@@ -264,7 +291,6 @@ def show_quiz_mode():
         data = st.session_state.q2_data
         st.markdown("**第 2 關：完成句子**")
         
-        # 👇 這裡加上了提示文字
         st.markdown("請選出正確的詞，把句子補完：(從本單元句子中)")
         
         # 顯示題目框
@@ -322,7 +348,16 @@ def show_quiz_mode():
 
 # --- 4. 主程式 ---
 def main():
-    st.markdown("<h1>O widang ako <br>我的朋友</h1>", unsafe_allow_html=True)
+    # 視覺優化：Header 區域
+    st.markdown("""
+    <div class="header-container">
+        <div style="font-size: 80px; margin-bottom: 10px;">👫</div>
+        <h1>O widang ako<br>我的朋友</h1>
+        <div class="info-tag">
+            講師：楊麗芳 &nbsp;|&nbsp; 教材提供者：楊麗芳
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
     
     tab1, tab2 = st.tabs(["📖 學習模式", "🎮 測驗挑戰"])
     
